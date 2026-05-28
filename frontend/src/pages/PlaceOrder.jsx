@@ -34,27 +34,57 @@ function PlaceOrder() {
     setFormData(data => ({...data,[name]:value}))
     }
 
-    const initPay = (order) =>{
-        const options = {
-      key:import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name:'Order Payment',
-      description: 'Order Payment',
-      order_id: order.id,
-      receipt: order.receipt,
-      handler: async (response) => {
-        console.log(response)
-    const {data} = await axios.post(serverUrl + '/api/order/verifyrazorpay',response,{withCredentials:true})
-    if(data){
-        navigate("/order")
-        setCartItem({})
+  const initPay = (order) => {
+    console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
 
-    }
-      }}
-    const rzp = new window.Razorpay(options)
-    rzp.open()
-   }
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+      amount: order.amount,
+
+      currency: order.currency,
+
+      name: "OneCart",
+
+      description: "Order Payment",
+
+      order_id: order.id,
+
+      handler: async function (response) {
+        console.log(response);
+
+        try {
+          const { data } = await axios.post(
+            serverUrl + "/api/order/verifyrazorpay",
+            response,
+            { withCredentials: true },
+          );
+
+          if (data.message === "Payment Successful") {
+            toast.success("Payment Successful");
+
+            setCartItem({});
+
+            navigate("/order");
+          } else {
+            toast.error("Payment Failed");
+          }
+        } catch (error) {
+          console.log(error);
+
+          toast.error("Verification Failed");
+        }
+      },
+
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+
+    rzp.open();
+  };
 
     
      const onSubmitHandler = async (e) => {
