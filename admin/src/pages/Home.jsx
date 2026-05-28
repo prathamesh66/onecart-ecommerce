@@ -3,7 +3,7 @@ import Nav from '../component/Nav'
 import Sidebar from '../component/Sidebar'
 import { useState } from 'react'
 import { useContext } from 'react'
-import { authDataContext } from '../context/AuthContext'
+import { authDataContext } from "../context/AuthContext";
 import { useEffect } from 'react'
 import axios from 'axios'
 
